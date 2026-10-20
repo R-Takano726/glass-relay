@@ -440,7 +440,14 @@ export async function createRelayServer({
       }, 5000)
     : null;
   polling?.unref();
+  const quotaRefresh = !demo
+    ? setInterval(() => {
+        refresh().catch(() => {});
+      }, 60000)
+    : null;
+  quotaRefresh?.unref();
   const close = () => {
+    if (quotaRefresh) clearInterval(quotaRefresh);
     if (polling) clearInterval(polling);
     return new Promise((resolve) =>
       server.close(() => {

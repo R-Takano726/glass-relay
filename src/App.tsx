@@ -732,7 +732,7 @@ export default function App() {
                 <span className="key-hint">⌘ ,</span>
               </button>
               <div className="version">
-                v0.1.0{" "}
+                v0.1.1{" "}
                 <span>
                   <ShieldCheck size={11} /> Local
                 </span>
@@ -1427,7 +1427,7 @@ export default function App() {
                   </form>
                 </div>
                 <div className="modal-footer">
-                  <span className="muted">Relay v0.1.0</span>
+                  <span className="muted">Relay v0.1.1</span>
                   <span className="local-label">
                     <ShieldCheck size={13} />
                     ローカル保存

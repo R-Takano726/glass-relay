@@ -8,6 +8,10 @@ import { RelayError, validAlias, usageFromObservation } from "./core.mjs";
 const exec = promisify(execFile);
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const reader = readFileSync(path.join(directory, "host.py"), "utf8");
+const claudeScript = readFileSync(
+  path.join(directory, "claude-usage.py"),
+  "utf8",
+);
 const rpcScript = readFileSync(path.join(directory, "rpc.py"), "utf8");
 export const shellQuote = (text) =>
   `'${String(text).replaceAll("'", "'\\''")}'`;
@@ -175,6 +179,13 @@ export async function collectHost(host) {
   } catch {
     /* A missing daemon does not prevent read-only transcript access. */
   }
+  try {
+    const observation = await claudeUsage(host);
+    if (observation) {
+      const index = usage.findIndex((u) => u.provider === "claude");
+      usage[index] = usageFromObservation(observation, host);
+    }
+  } catch {}
   return {
     sessions,
     usage,
@@ -227,4 +238,20 @@ export async function readSelectionRequest(host) {
   return host === "local"
     ? run("python3", ["-I", "-", arg], reader)
     : run("ssh", [...sshArgs(host), `python3 -I - ${shellQuote(arg)}`], reader);
+}
+
+export async function claudeUsage(host) {
+  assertHost(host);
+  if (host === "local")
+    return run("python3", ["-I", "-c", claudeScript], "", 16000);
+  const encoded = Buffer.from(claudeScript).toString("base64");
+  return run(
+    "ssh",
+    [
+      ...sshArgs(host),
+      `python3 -I -c ${shellQuote(`import base64;exec(base64.b64decode('${encoded}'))`)}`,
+    ],
+    "",
+    20000,
+  );
 }
