@@ -78,3 +78,14 @@ Claude CLIのget_usage制御要求による取得を追加。AIのuser入力は�
 Opus追加レビューの重大指摘を原文照合。最終レビューは、親強制終了と実CLI取得を確認できれば公開可能と判定した。両方を実機で確認した。レビュー用子チャットは引き続き非永続・読み取り専用。
 
 ネイティブのコピー検証で作成した履歴1件は「コピー済み・送信未確認」のままとし、実際のAI会話へ送信していない。確認済みへの偽の状態変更は行っていない。
+
+## 公開状態の最終確認
+
+v0.1.2のリリースタグは `01e04bc6a3453f2699482ef4e72727f708d07ace` を指す。公開ZIPのSHA-256は `820b5d0dd89e8949485ca5bd381a2668de7ea88ae95d063ab1e95eaa8ecb9af6`。GitHub資産のdigestと手元ZIPが一致する。
+
+- [macOS build](https://github.com/R-Takano726/glass-relay/actions/runs/39414934663): success
+- [Test and deploy](https://github.com/R-Takano726/glass-relay/actions/runs/39414934573): success
+- [公開サイト](https://r-takano726.github.io/glass-relay/): 実ブラウザにv0.1.2表示
+- [公開アプリ](https://github.com/R-Takano726/glass-relay/releases/tag/v0.1.2): ZIP資産uploaded、署名検証済み
+
+公開後のブラウザ再検証は[6項目すべて合格](public-browser-test-results.json)。設定・プレビューのEscape、検索空結果、自動修正抑止、合成デモの明示送信、再読み込み後の送信履歴を確認。消えるトーストではなく、該当テスト文言の送信済み履歴を確定証拠として扱う。JSコンソールerrorは0件。

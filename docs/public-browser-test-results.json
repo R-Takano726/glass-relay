@@ -1,0 +1,30 @@
+{
+  "version": "0.1.2",
+  "performedAt": "2026-10-20T11:29:27.955Z",
+  "checks": [
+    {
+      "name": "公開v0.1.2とデモ明示",
+      "pass": true
+    },
+    {
+      "name": "公開版の設定とEscape",
+      "pass": true
+    },
+    {
+      "name": "公開版の検索空結果と自動修正抑止",
+      "pass": true
+    },
+    {
+      "name": "公開版の原文プレビューとEscape",
+      "pass": true
+    },
+    {
+      "name": "公開デモの明示送信",
+      "pass": true
+    },
+    {
+      "name": "公開版の送信履歴の再読み込み保持",
+      "pass": true
+    }
+  ]
+}
