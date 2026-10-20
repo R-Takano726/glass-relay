@@ -68,7 +68,8 @@ final class RelayDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, W
         process.currentDirectoryURL = project
         var environment = ProcessInfo.processInfo.environment
         environment["RELAY_DATA_DIR"] = data.path
-        environment["RELAY_PORT"] = "0"
+        let preferredPort = UserDefaults.standard.integer(forKey: "servicePort")
+        environment["RELAY_PORT"] = (1024...65535).contains(preferredPort) ? String(preferredPort) : "0"
         environment["PATH"] = "/opt/homebrew/bin:/usr/local/bin:\(NSHomeDirectory())/.local/bin:" + (environment["PATH"] ?? "/usr/bin:/bin")
         if ProcessInfo.processInfo.arguments.contains("--demo") { environment["RELAY_DEMO"] = "1" }
         environment["RELAY_NATIVE"] = "1"
@@ -92,6 +93,7 @@ final class RelayDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, W
             Task { @MainActor in
                 guard let self, self.servicePort == 0 else { return }
                 self.servicePort = port
+                UserDefaults.standard.set(port, forKey: "servicePort")
                 self.webView.load(URLRequest(url: URL(string: "http://127.0.0.1:\(port)/?compact=1&native=1")!))
             }
         }

@@ -31,6 +31,7 @@ export async function createRelayServer({
   port = 4318,
   dataDir = defaultDataDir,
   testMode = false,
+  allowPortFallback = false,
 } = {}) {
   const store = new Store(dataDir);
   const token = randomBytes(32).toString("hex");
@@ -397,7 +398,12 @@ export async function createRelayServer({
   server.headersTimeout = 10000;
   await refresh();
   await new Promise((resolve, reject) => {
-    server.once("error", reject);
+    server.once("error", (error) => {
+      if (allowPortFallback && port !== 0 && error.code === "EADDRINUSE") {
+        server.once("error", reject);
+        server.listen(0, "127.0.0.1", resolve);
+      } else reject(error);
+    });
     server.listen(port, "127.0.0.1", resolve);
   });
   let pollInFlight = false;
@@ -482,6 +488,7 @@ if (
   for (const signal of ["SIGINT", "SIGTERM"]) process.once(signal, shutdown);
   service = await createRelayServer({
     demo,
+    allowPortFallback: process.env.RELAY_NATIVE === "1",
     port: Number(process.env.RELAY_PORT || 4318),
     dataDir:
       process.env.RELAY_DATA_DIR ||

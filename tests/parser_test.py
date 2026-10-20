@@ -5,6 +5,15 @@ def claude(uuid,parent,role,content,**extra):return {'type':role,'uuid':uuid,'pa
 class ParserTests(unittest.TestCase):
  def test_codex_excludes_tools_thinking_and_commentary(self):
   result=adapter.normalize([codex('user','request'),codex('assistant','working','commentary'),{'type':'response_item','payload':{'type':'function_call_output','output':'secret'}},codex('assistant','final','final')],'codex');self.assertEqual([m['text'] for m in result['messages']],['request','final'])
+ def test_current_codex_final_answer_phase_preserves_assistant_response(self):
+  records=[codex('user','review this'),codex('assistant','progress only','commentary'),codex('assistant','Review result: verified.','final_answer')]
+  messages=adapter.normalize(records,'codex')['messages'];self.assertEqual([(m['role'],m['text']) for m in messages],[('user','review this'),('assistant','Review result: verified.')])
+ def test_automatic_goal_continuation_is_not_a_human_request(self):
+  records=[codex('user','<codex_internal_context source="goal">internal continuation</codex_internal_context>'),codex('user','actual request')]
+  self.assertEqual([m['text'] for m in adapter.normalize(records,'codex')['messages']],['actual request'])
+ def test_rollback_after_hidden_goal_fails_closed(self):
+  records=[codex('user','human request'),codex('user','<codex_internal_context source="goal">internal</codex_internal_context>'),{'type':'event_msg','payload':{'type':'thread_rolled_back','num_turns':1}}]
+  self.assertIn('unsupported-history-change',adapter.normalize(records,'codex')['warnings'])
  def test_codex_environment_and_agents_are_not_user_messages(self):
   result=adapter.normalize([codex('user','# AGENTS.md instructions\nprivate'),codex('user','<environment_context>private'),codex('user','actual request')],'codex');self.assertEqual(len(result['messages']),1)
  def test_codex_event_messages_do_not_duplicate_response_items(self):

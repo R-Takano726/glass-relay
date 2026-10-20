@@ -6,7 +6,7 @@ MAX_BYTES=32*1024*1024
 MARKER=re.compile(r'^\[Relay:[0-9a-f-]+\]')
 def digest(s): return hashlib.sha256(s.encode()).hexdigest()
 def clean_user(text):
-    return bool(text.strip()) and not re.match(r'^\s*(?:<environment_context>|<INSTRUCTIONS>|# AGENTS\.md instructions|<permissions instructions>|<turn_aborted>|<command-name>|<local-command-stdout>|<system-reminder>)',text)
+    return bool(text.strip()) and not re.match(r'^\s*(?:<environment_context>|<INSTRUCTIONS>|# AGENTS\.md instructions|<permissions instructions>|<turn_aborted>|<command-name>|<local-command-stdout>|<system-reminder>|<codex_internal_context\s+source=[\"\']goal[\"\'])',text)
 def text_blocks(content):
     if isinstance(content,str): return content
     if not isinstance(content,list): return ''
@@ -22,10 +22,12 @@ def normalize(records,provider):
             lineage=set(); cursor=leaf.get('uuid')
             while cursor in nodes and cursor not in lineage:
                 lineage.add(cursor);cursor=nodes[cursor].get('parentUuid')
-    recognized=False
+    recognized=False;hidden_goal_seen=False
     for index,r in enumerate(records):
         ts=r.get('timestamp') or '1970-01-01T00:00:00Z'; p=r.get('payload') or {}; typ=r.get('type')
         if typ=='event_msg' and p.get('type')=='thread_rolled_back':
+            if hidden_goal_seen:
+                warnings.append('unsupported-history-change');continue
             count=p.get('num_turns')
             if isinstance(count,int) and count>0:
                 users=[i for i,m in enumerate(messages) if m['role']=='user']
@@ -43,7 +45,7 @@ def normalize(records,provider):
         role=None; text=''; mid=None
         if provider=='codex' and typ=='response_item' and p.get('type')=='message':
             recognized=True;role=p.get('role');text=text_blocks(p.get('content'));mid=p.get('id')
-            if role=='assistant' and p.get('phase') not in (None,'final'):continue
+            if role=='assistant' and p.get('phase') not in (None,'final','final_answer'):continue
         if provider=='claude' and typ in ('user','assistant'):
             recognized=True
             if r.get('isSidechain') or r.get('isCompactSummary') or r.get('isMeta'):continue
@@ -52,7 +54,9 @@ def normalize(records,provider):
             if isinstance(content,list) and any(c.get('type') in ('tool_use','tool_result','server_tool_use') for c in content if isinstance(c,dict)):continue
             text=text_blocks(content);mid=msg.get('id') if role=='assistant' else r.get('uuid');model=msg.get('model',model);metadata={'cwd':r.get('cwd',metadata.get('cwd','')),'id':r.get('sessionId',metadata.get('id',''))}
         if role not in ('user','assistant') or not text.strip():continue
-        if role=='user' and not clean_user(text):continue
+        if role=='user' and not clean_user(text):
+            if provider=='codex' and text.lstrip().startswith('<codex_internal_context'):hidden_goal_seen=True
+            continue
         if MARKER.match(text):continue
         h=digest(text);mid=mid or f'{role}-{h[:20]}-{index}'
         previous=next((m for m in reversed(messages[-12:]) if m['id']==mid),None)
