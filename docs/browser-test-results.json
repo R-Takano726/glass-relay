@@ -1,0 +1,118 @@
+{
+  "browser": "Chrome",
+  "performedAt": "2026-10-20T10:22:35.371Z",
+  "checks": [
+    {
+      "name": "初期表示・Mac/WSL・利用枠",
+      "pass": true
+    },
+    {
+      "name": "検索0件",
+      "pass": true
+    },
+    {
+      "name": "Mac環境フィルター",
+      "pass": true
+    },
+    {
+      "name": "下書きと選択の再読み込み保持",
+      "pass": true
+    },
+    {
+      "name": "補足指示の保存値",
+      "pass": true
+    },
+    {
+      "name": "開始位置の選択",
+      "pass": true
+    },
+    {
+      "name": "引用範囲と原文プレビュー",
+      "pass": true
+    },
+    {
+      "name": "明示送信と送信済み範囲の更新",
+      "pass": true
+    },
+    {
+      "name": "逆方向の会話と回答取得",
+      "pass": true
+    },
+    {
+      "name": "クリップボード原文・往復引用の重複防止",
+      "pass": true
+    },
+    {
+      "name": "コピーと送信済みの区別",
+      "pass": true
+    },
+    {
+      "name": "本人による送信済み確定",
+      "pass": true
+    },
+    {
+      "name": "履歴一覧",
+      "pass": true
+    },
+    {
+      "name": "利用枠詳細・取得元・観測元",
+      "pass": true
+    },
+    {
+      "name": "アニメーションOFF・透明度軽減",
+      "pass": true
+    },
+    {
+      "name": "設定値の保持",
+      "pass": true
+    },
+    {
+      "name": "Escapeで閉じる",
+      "pass": true
+    },
+    {
+      "name": "コンパクト表示",
+      "pass": true
+    },
+    {
+      "name": "空会話の表示と送信無効",
+      "pass": true
+    },
+    {
+      "name": "390px幅で横スクロールなし",
+      "pass": true
+    },
+    {
+      "name": "ダイアログのキーボードフォーカス保持",
+      "pass": true
+    },
+    {
+      "name": "390px設定ダイアログの横幅",
+      "pass": true
+    },
+    {
+      "name": "実データモードでMac/WSL接続",
+      "pass": true
+    },
+    {
+      "name": "デモと実接続の同時利用・Cookie分離",
+      "pass": true
+    },
+    {
+      "name": "範囲未選択で全文を送らない",
+      "pass": true
+    },
+    {
+      "name": "補足指示だけのデモ送信後も範囲管理が壊れない",
+      "pass": true
+    },
+    {
+      "name": "補足指示のみの送信済み履歴・0件",
+      "pass": true
+    },
+    {
+      "name": "履歴詳細の個別読み込み",
+      "pass": true
+    }
+  ]
+}

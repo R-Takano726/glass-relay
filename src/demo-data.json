@@ -1,0 +1,193 @@
+{
+  "mode": "demo",
+  "environments": [
+    { "id": "local", "label": "Mac", "status": "connected" },
+    { "id": "dev-wsl", "label": "WSL", "status": "connected" }
+  ],
+  "sessions": [
+    {
+      "id": "dev-wsl:codex:design",
+      "host": "dev-wsl",
+      "provider": "codex",
+      "title": "認証フローの実装",
+      "cwd": "~/projects/workspace",
+      "updatedAt": "2026-10-20T10:28:00Z",
+      "model": "GPT-6.1 Sol",
+      "contextPercent": 24,
+      "messageCount": 4,
+      "transport": "demo",
+      "messages": [
+        {
+          "id": "m1",
+          "role": "user",
+          "text": "認証フローの実装を確認してください。セッション更新時の競合も見てほしいです。",
+          "timestamp": "2026-10-20T10:24:00Z",
+          "hash": "h1"
+        },
+        {
+          "id": "m2",
+          "role": "assistant",
+          "text": "認証フローを確認しました。\n\n1. アクセストークンの更新を一つの処理に集約\n2. 更新中のリクエストは待機して、完了後に再試行\n3. 更新に失敗した場合はログイン画面へ移動\n\n既存のセッションを保持したまま、重複した更新を防ぐ実装です。",
+          "timestamp": "2026-10-20T10:25:00Z",
+          "hash": "h2"
+        },
+        {
+          "id": "m3",
+          "role": "user",
+          "text": "複数のタブから同時に更新された場合はどうなりますか？",
+          "timestamp": "2026-10-20T10:26:00Z",
+          "hash": "h3"
+        },
+        {
+          "id": "m4",
+          "role": "assistant",
+          "text": "現在の排他制御はタブ内に限定されています。タブ間の競合も防ぐには、Web Locks APIで更新処理を共有する必要があります。\n\n変更箇所：src/auth/session.ts\n検証：同一タブ内の並列リクエストは確認済み。タブ間の同時更新は未検証です。",
+          "timestamp": "2026-10-20T10:28:00Z",
+          "hash": "h4"
+        }
+      ]
+    },
+    {
+      "id": "dev-wsl:claude:review",
+      "host": "dev-wsl",
+      "provider": "claude",
+      "title": "認証フローのレビュー",
+      "cwd": "~/projects/workspace",
+      "updatedAt": "2026-10-20T10:22:00Z",
+      "model": "Opus 5.5 · Medium",
+      "contextPercent": 12,
+      "messageCount": 2,
+      "transport": "demo",
+      "messages": [
+        {
+          "id": "r1",
+          "role": "user",
+          "text": "認証フローの設計をレビューしてください。",
+          "timestamp": "2026-10-20T10:20:00Z",
+          "hash": "r1"
+        },
+        {
+          "id": "r2",
+          "role": "assistant",
+          "text": "更新処理の排他制御と、認証失敗時の状態遷移を中心に確認します。変更点と検証結果を共有してください。",
+          "timestamp": "2026-10-20T10:22:00Z",
+          "hash": "r2"
+        }
+      ]
+    },
+    {
+      "id": "local:codex:app",
+      "host": "local",
+      "provider": "codex",
+      "title": "メニューバーUI",
+      "cwd": "~/projects/relay",
+      "updatedAt": "2026-10-20T09:48:00Z",
+      "model": "GPT-6.1 Sol",
+      "contextPercent": 36,
+      "messageCount": 2,
+      "transport": "demo",
+      "messages": [
+        {
+          "id": "a1",
+          "role": "user",
+          "text": "メニューバーから会話を引き継げるようにしてください。",
+          "timestamp": "2026-10-20T09:46:00Z",
+          "hash": "a1"
+        },
+        {
+          "id": "a2",
+          "role": "assistant",
+          "text": "送信元と送信先の選択、会話の範囲確認、明示送信の順に配置します。閉じても下書きは保持します。",
+          "timestamp": "2026-10-20T09:48:00Z",
+          "hash": "a2"
+        }
+      ]
+    },
+    {
+      "id": "local:claude:app-review",
+      "host": "local",
+      "provider": "claude",
+      "title": "UIの設計レビュー",
+      "cwd": "~/projects/relay",
+      "updatedAt": "2026-10-20T09:42:00Z",
+      "model": "Opus 5.5 · Medium",
+      "contextPercent": 18,
+      "messageCount": 1,
+      "transport": "demo",
+      "messages": [
+        {
+          "id": "b1",
+          "role": "assistant",
+          "text": "入力途中でポップオーバーを閉じても、選択した会話と補足指示を復元する設計を推奨します。",
+          "timestamp": "2026-10-20T09:42:00Z",
+          "hash": "b1"
+        }
+      ]
+    },
+    {
+      "id": "dev-wsl:codex:api",
+      "host": "dev-wsl",
+      "provider": "codex",
+      "title": "APIテスト",
+      "cwd": "~/projects/api",
+      "updatedAt": "2026-10-20T08:30:00Z",
+      "model": "GPT-6.1 Sol",
+      "contextPercent": 8,
+      "messageCount": 1,
+      "transport": "demo",
+      "messages": [
+        {
+          "id": "c1",
+          "role": "assistant",
+          "text": "入力の検証とエラー応答を確認しました。テストはすべて合格しています。",
+          "timestamp": "2026-10-20T08:30:00Z",
+          "hash": "c1"
+        }
+      ]
+    },
+    {
+      "id": "local:claude:empty",
+      "host": "local",
+      "provider": "claude",
+      "title": "新しいレビュー",
+      "cwd": "~/projects/relay",
+      "updatedAt": "2026-10-20T08:00:00Z",
+      "model": "Opus 5.5 · Medium",
+      "contextPercent": 0,
+      "messageCount": 0,
+      "transport": "demo",
+      "messages": []
+    }
+  ],
+  "usage": [
+    {
+      "provider": "claude",
+      "host": "dev-wsl",
+      "windows": [
+        {
+          "label": "5時間",
+          "remaining": 68,
+          "resetsAt": "2026-10-20T14:00:00Z"
+        },
+        { "label": "週間", "remaining": 54, "resetsAt": "2026-10-25T00:00:00Z" }
+      ],
+      "observedAt": "2026-10-20T10:28:00Z",
+      "source": "デモデータ"
+    },
+    {
+      "provider": "codex",
+      "host": "local",
+      "windows": [
+        {
+          "label": "5時間",
+          "remaining": 82,
+          "resetsAt": "2026-10-20T13:00:00Z"
+        },
+        { "label": "週間", "remaining": 42, "resetsAt": "2026-10-26T00:00:00Z" }
+      ],
+      "observedAt": "2026-10-20T10:28:00Z",
+      "source": "デモデータ"
+    }
+  ],
+  "history": []
+}

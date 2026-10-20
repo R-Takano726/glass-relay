@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.local/
+build/
+.env*
+*.log
+*.tsbuildinfo
+.DS_Store
+opus-design-review.md
+docs/*private*
+__pycache__/
+*.pyc

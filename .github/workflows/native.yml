@@ -1,0 +1,24 @@
+name: macOS build
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run native:build
+      - run: codesign --verify --deep --strict build/Relay.app
+      - run: ditto -c -k --norsrc --noextattr --keepParent build/Relay.app build/Relay-macOS.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Relay-macOS
+          path: build/Relay-macOS.zip

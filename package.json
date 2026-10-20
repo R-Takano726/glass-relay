@@ -1,0 +1,31 @@
+{
+  "name": "glass-relay",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "start": "node server/index.mjs",
+    "demo": "RELAY_DEMO=1 RELAY_DATA_DIR=.local/demo node server/index.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm run build && npm test",
+    "native:build": "bash scripts/build-mac.sh"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "motion": "^12.23.24",
+    "lucide-react": "^0.468.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12"
+  }
+}
