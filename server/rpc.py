@@ -63,7 +63,7 @@ def main(req):
                 return msg['result']
         raise RuntimeError('Codex応答を確認できません')
     try:
-        rpc('initialize',{'clientInfo':{'name':'glass-relay','title':'Relay','version':'0.1.1'},'capabilities':{'experimentalApi':True}})
+        rpc('initialize',{'clientInfo':{'name':'glass-relay','title':'Relay','version':'0.1.2'},'capabilities':{'experimentalApi':True}})
         notify('initialized',{})
         if req.get('action')=='probe':return {'available':True}
         if req.get('action')=='catalog':

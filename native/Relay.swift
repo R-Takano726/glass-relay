@@ -7,9 +7,11 @@ final class RelayDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, W
     let popover = NSPopover()
     var webView: WKWebView!
     var service: Process?
+    var serviceInput: Pipe?
     var servicePort: Int = 0
     var browserWindow: NSWindow?
     var localMonitor: Any?
+    var showOnReady = !ProcessInfo.processInfo.arguments.contains("--background")
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -69,7 +71,11 @@ final class RelayDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, W
         environment["RELAY_PORT"] = "0"
         environment["PATH"] = "/opt/homebrew/bin:/usr/local/bin:\(NSHomeDirectory())/.local/bin:" + (environment["PATH"] ?? "/usr/bin:/bin")
         if ProcessInfo.processInfo.arguments.contains("--demo") { environment["RELAY_DEMO"] = "1" }
+        environment["RELAY_NATIVE"] = "1"
         process.environment = environment
+        let input = Pipe()
+        process.standardInput = input
+        serviceInput = input
         let output = Pipe()
         process.standardOutput = output
         process.standardError = FileHandle.standardError
@@ -97,6 +103,19 @@ final class RelayDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, W
         }
         do { try process.run(); service = process }
         catch { showError("ローカルサービスを起動できませんでした。") }
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        if showOnReady {
+            showOnReady = false
+            if !popover.isShown { toggle() }
+        }
+    }
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if servicePort > 0 {
+            if !popover.isShown { toggle() }
+        } else { showOnReady = true }
+        return false
     }
 
     func showError(_ message: String) {
@@ -130,6 +149,7 @@ final class RelayDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, W
     }
     @objc func quit() { NSApp.terminate(nil) }
     func applicationWillTerminate(_ notification: Notification) {
+        try? serviceInput?.fileHandleForWriting.close()
         service?.terminate()
         if let localMonitor { NSEvent.removeMonitor(localMonitor) }
     }

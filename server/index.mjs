@@ -463,7 +463,24 @@ if (
   import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
 ) {
   const demo = process.env.RELAY_DEMO === "1";
-  const service = await createRelayServer({
+  let service;
+  let parentGone = false;
+  let shuttingDown = false;
+  const shutdown = async () => {
+    parentGone = true;
+    if (!service || shuttingDown) return;
+    shuttingDown = true;
+    const closing = service.close();
+    service.server.closeAllConnections();
+    await closing;
+    process.exit(0);
+  };
+  if (process.env.RELAY_NATIVE === "1") {
+    process.stdin.once("end", shutdown);
+    process.stdin.resume();
+  }
+  for (const signal of ["SIGINT", "SIGTERM"]) process.once(signal, shutdown);
+  service = await createRelayServer({
     demo,
     port: Number(process.env.RELAY_PORT || 4318),
     dataDir:
@@ -473,9 +490,5 @@ if (
   console.log(
     `Relay: http://127.0.0.1:${service.server.address().port} (${demo ? "demo" : "live"})`,
   );
-  for (const signal of ["SIGINT", "SIGTERM"])
-    process.once(signal, async () => {
-      await service.close();
-      process.exit(0);
-    });
+  if (parentGone) await shutdown();
 }

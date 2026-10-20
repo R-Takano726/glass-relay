@@ -1,0 +1,75 @@
+{
+  "version": "0.1.2",
+  "platform": "macOS",
+  "performedAt": "2026-10-20T11:25:15.912Z",
+  "checks": [
+    {
+      "name": "最終版の起動・Popover表示",
+      "pass": true
+    },
+    {
+      "name": "MacのClaude/Codex利用枠の実表示",
+      "pass": true
+    },
+    {
+      "name": "Escapeで設定だけ閉じる",
+      "pass": true
+    },
+    {
+      "name": "⌘カンマで設定を開く",
+      "pass": true
+    },
+    {
+      "name": "入力と⌘Aによる置換",
+      "pass": true
+    },
+    {
+      "name": "SSH名の自動大文字化を防止",
+      "pass": true
+    },
+    {
+      "name": "既存WSLへ接続",
+      "pass": true
+    },
+    {
+      "name": "透明度設定を切り替える",
+      "pass": true
+    },
+    {
+      "name": "検索とセッション選択",
+      "pass": true
+    },
+    {
+      "name": "日本語の補足指示を貼り付け",
+      "pass": true
+    },
+    {
+      "name": "原文プレビューとEscape",
+      "pass": true
+    },
+    {
+      "name": "ネイティブClipboardブリッジと⌘V",
+      "pass": true
+    },
+    {
+      "name": "⌘A・⌘C・⌘Vの編集メニュー",
+      "pass": true
+    },
+    {
+      "name": "コピー済み・送信未確認の履歴と詳細",
+      "pass": true
+    },
+    {
+      "name": "MacとWSLの4利用枠・取得元表示",
+      "pass": true
+    },
+    {
+      "name": "Swift親強制終了後の子サービス・lock解放",
+      "pass": true
+    },
+    {
+      "name": "PopoverをEscapeで閉じ、アプリ再オープンで復帰",
+      "pass": true
+    }
+  ]
+}

@@ -287,6 +287,9 @@ function Picker({
           <input
             autoFocus
             aria-label="セッションを検索"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             placeholder="セッションを検索"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -482,7 +485,14 @@ export default function App() {
   }, [sourceId, data?.sessions]);
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (
+        e.key === "Escape" &&
+        !e.isComposing &&
+        e.keyCode !== 229 &&
+        (picker || settings || preview || detail)
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
         setPicker(null);
         setSettings(false);
         setPreview(null);
@@ -495,7 +505,7 @@ export default function App() {
     };
     window.addEventListener("keydown", listener);
     return () => window.removeEventListener("keydown", listener);
-  }, []);
+  }, [picker, settings, preview, detail]);
   const source = data?.sessions.find((s) => s.id === sourceId),
     target = data?.sessions.find((s) => s.id === targetId),
     anchor = data ? api.confirmedAnchor(data, sourceId, targetId) : undefined;
@@ -732,7 +742,7 @@ export default function App() {
                 <span className="key-hint">⌘ ,</span>
               </button>
               <div className="version">
-                v0.1.1{" "}
+                v0.1.2{" "}
                 <span>
                   <ShieldCheck size={11} /> Local
                 </span>
@@ -1410,6 +1420,9 @@ export default function App() {
                     <div>
                       <input
                         id="ssh-alias"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
                         value={alias}
                         onChange={(e) => setAlias(e.target.value)}
                         placeholder="~/.ssh/config の Host"
@@ -1427,7 +1440,7 @@ export default function App() {
                   </form>
                 </div>
                 <div className="modal-footer">
-                  <span className="muted">Relay v0.1.1</span>
+                  <span className="muted">Relay v0.1.2</span>
                   <span className="local-label">
                     <ShieldCheck size={13} />
                     ローカル保存

@@ -23,14 +23,14 @@ def normalize(payload):
     if not windows:return None
     return {'provider':'claude','source':'Claude CLI get_usage','observedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'data':{'primary':windows[0],'secondary':windows[1] if len(windows)>1 else None}}
 
-def query():
-    home=pathlib.Path.home();candidates=[shutil.which('claude'),str(home/'.local/bin/claude')]+sorted(glob.glob(str(home/'.nvm/versions/node/*/bin/claude')),reverse=True)
+def query(timeout=12):
+    home=pathlib.Path.home();candidates=[str(home/'.local/bin/claude'),shutil.which('claude')]+sorted(glob.glob(str(home/'.nvm/versions/node/*/bin/claude')),reverse=True)
     binary=next((p for p in candidates if p and os.path.isfile(p) and os.access(p,os.X_OK)),None)
     if not binary:return None
     env={k:v for k,v in os.environ.items() if k not in ('ANTHROPIC_API_KEY','ANTHROPIC_AUTH_TOKEN','ANTHROPIC_BASE_URL')};env['PATH']=str(pathlib.Path(binary).parent)+os.pathsep+env.get('PATH','')
     workspace=tempfile.TemporaryDirectory(prefix='glass-relay-usage-')
     child=subprocess.Popen([binary,'-p','--settings','{"disableAllHooks":true}','--safe-mode','--no-session-persistence','--input-format','stream-json','--output-format','stream-json','--verbose','--tools','','--strict-mcp-config','--mcp-config','{"mcpServers":{}}'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,env=env,cwd=workspace.name,start_new_session=True)
-    pending=b'';deadline=time.monotonic()+12
+    pending=b'';deadline=time.monotonic()+timeout
     def control(subtype,ident):
         nonlocal pending
         child.stdin.write((json.dumps({'type':'control_request','request_id':ident,'request':{'subtype':subtype}})+'\n').encode());child.stdin.flush()
@@ -63,7 +63,11 @@ def query():
             try:os.killpg(child.pid,signal.SIGKILL)
             except ProcessLookupError:pass
             child.wait()
+        for pipe in (child.stdin,child.stdout):
+            try:pipe.close()
+            except OSError:pass
         workspace.cleanup()
 if __name__=='__main__':
+    signal.signal(signal.SIGTERM,lambda *_:sys.exit(1))
     try:print(json.dumps(query(),ensure_ascii=False))
     except Exception:print('null')
