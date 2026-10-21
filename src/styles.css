@@ -1778,6 +1778,24 @@ p {
   -webkit-backdrop-filter: none;
   background: #ffffff7a;
 }
+/* Selection lists need an opaque surface above the conversation, including
+   WKWebView where the general native glass rule disables backdrop blur. */
+.picker,
+.native .picker {
+  background: #fbfcfe;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: #dce3ec;
+  box-shadow:
+    0 16px 45px #34425a30,
+    0 2px 8px #34425a12;
+}
+.picker-item strong {
+  color: #394658;
+}
+.picker-item > div > span {
+  color: #657387;
+}
 .native .conversation {
   background: #ffffffa6;
 }
