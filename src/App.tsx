@@ -463,13 +463,25 @@ export default function App() {
     localStorage.setItem(PREFS, JSON.stringify(prefs));
     document.documentElement.classList.toggle("solid", prefs.solid);
   }, [prefs]);
+  const messagesSource = useRef<string | null>(null);
   useEffect(() => {
-    if (!data || !sourceId) return;
+    const session = data?.sessions.find((s) => s.id === sourceId);
+    if (!session) {
+      messagesSource.current = null;
+      setAll([]);
+      setSessionLoading(false);
+      return;
+    }
     let cancelled = false;
-    setSessionLoading(true);
-    setAll([]);
+    // Metadata/usage refreshes must not unmount the conversation being read.
+    // Keep refreshing on every session snapshot: adapters may omit update counts.
+    if (messagesSource.current !== sourceId) {
+      messagesSource.current = sourceId;
+      setSessionLoading(true);
+      setAll([]);
+    }
     api
-      .messages(data.sessions.find((s) => s.id === sourceId)!)
+      .messages(session)
       .then((messages) => {
         if (!cancelled) setAll(api.visibleMessages(messages));
       })
@@ -568,6 +580,15 @@ export default function App() {
     setBusy(true);
     try {
       const r = await getPrepared();
+      if (r.status === "unknown" || r.status === "sending") {
+        setPreview(r);
+        setError(
+          r.status === "sending"
+            ? "送信処理中です。コピーせず、送信結果を確認してください。"
+            : "送信結果が未確認のためコピーしていません。送信先で届いているか確認してください。",
+        );
+        return;
+      }
       await api.copyText(r.text);
       const updated = await api.deliver(r, "copied");
       setPreview(updated);
@@ -1186,6 +1207,7 @@ export default function App() {
                                   copied: "コピー済み",
                                   prepared: "下書き",
                                   unknown: "未確認",
+                                  sending: "送信処理中",
                                   failed: "失敗",
                                 }[r.status]
                               }
@@ -1290,6 +1312,7 @@ export default function App() {
                         copied: "コピー済み・送信未確認",
                         confirmed: "送信済み",
                         failed: "失敗",
+                        sending: "送信処理中",
                         unknown: "送信未確認",
                       }[(preview || detail)!.status]
                     }

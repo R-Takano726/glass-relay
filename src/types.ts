@@ -49,7 +49,7 @@ export type Relay = {
   count: number;
   note: string;
   text: string;
-  status: "prepared" | "copied" | "confirmed" | "unknown" | "failed";
+  status: "prepared" | "copied" | "confirmed" | "unknown" | "failed" | "sending";
   createdAt: string;
   endId: string;
   endHash: string;
