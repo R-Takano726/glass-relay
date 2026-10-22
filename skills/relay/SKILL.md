@@ -1,6 +1,6 @@
 ---
 name: relay
-description: Mac・WSLのCodex／Claude Codeで、自動レビューと /relay を共通の「レビュー→説明→本人が選択→修正」で行う。設計・大きな実装後の相互レビュー、手動レビュー、別のAIへの会話引継ぎに使う。
+description: 「レビューして」「レビューお願いします」、/relay、$relay と本人が依頼した時、Mac・WSLのCodex／Claude Codeで「レビュー→説明→本人が選択→修正」を行う。設計・実装の完了だけでは起動しない。別のAIへの会話引継ぎにも使う。
 ---
 
 # Relay
@@ -9,7 +9,7 @@ description: Mac・WSLのCodex／Claude Codeで、自動レビューと /relay �
 
 ## レビュー後の共通手順
 
-自動レビューと手動の新規レビューでは、必ず [review-flow.md](references/review-flow.md) を読む。CodexからはClaude、Claude CodeからはCodexへレビューを依頼し、元チャットで照合・説明して本人の採否を待つ。「詳しい説明」は修正許可ではない。
+本人が「レビューして」等と依頼した時の新規レビューでは、必ず [review-flow.md](references/review-flow.md) を読む。設計・実装・修正の完了だけでは実行しない。依頼1回につき原則1回とし、修正後の再レビューも新たな本人指示が必要。通常のテスト・ビルドはこの制限に含めない。CodexからはClaude、Claude CodeからはCodexへレビューを依頼し、元チャットで照合・説明して本人の採否を待つ。「詳しい説明」は修正許可ではない。
 
 ## チャット内で選ぶ
 
